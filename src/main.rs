@@ -1,15 +1,17 @@
+use std::io;
+
 enum ItemType {
     Item(Item),
     Weapon(Weapon),
 }
 
 //Ok, I'm gonna add a match later that will sort out all of functionality of these
-//The thing I need to decide on though is whether I need to separate passive (constant score increase) and active (apply effect on weapon hit) attributes
 enum PassiveAttribute {
     ArcaneFocus,
     Magical
 }
 
+//I'm going to need to figure out how these attributes are going to be activated
 enum ActiveAttribute {
     Crippling, //My idea for this one is that there is a small chance that you cripple the enemy (applying the crippled effect) which than permanently greatly decreases their damage
 }
@@ -44,7 +46,7 @@ struct Player {
     inventory: Vec<ItemType>,
 }
 
-impl Player{
+impl Player {
     fn new(health: u64, class: PlayerClass) -> Self {
         Self {
             health: health,
@@ -58,8 +60,23 @@ impl Player{
     }
 }
 
+fn get_input() -> Vec<String> {
+    let mut input: String = String::new();
+    io::stdin()
+        .read_line(&mut input)
+        .expect("Unable to read Stdin");
+    input = input.to_lowercase();
+    let input: Vec<&str> = input
+        .trim()
+        .split(' ')
+        .collect();
+    
+    input.iter().map(|&s| s.into()).collect()
+}
+
 fn main() {
     let hero = Player::new(100, PlayerClass::Rouge);
-
-    println!("{}", hero.get_health());
+    
+    let some_text: Vec<String> = get_input();
+    dbg!("You entered: {}", some_text);
 }
