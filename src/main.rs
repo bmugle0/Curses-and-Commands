@@ -40,10 +40,12 @@ enum PlayerClass {
 }
 
 //Maybe I should have strength modifier (for enemies too) that multiplies with the damage of the weapon
+// I should probably have strength, defense, mag_strength, and mag_defense stats
 struct Player {
     health: u64,
     class: PlayerClass,
     inventory: Vec<ItemType>,
+    equipped_weapon: Option<Weapon>,
 }
 
 impl Player {
@@ -52,11 +54,38 @@ impl Player {
             health: health,
             class: class,
             inventory: Vec::new(),
+            equipped_weapon: None,
         }
     }
     
     fn get_health(&self) -> u64 {
         self.health
+    }
+    
+}
+
+pub trait Attackable {
+    fn take_damage(&mut self, damage: u64) -> String;
+}
+
+struct Enemy {
+    name: String,
+    health: u64,
+}
+
+impl Enemy {
+    fn new(name: &str, health: u64) -> Self {
+        Self {
+            name: String::from(name),
+            health: health,
+        }
+    }
+}
+
+impl Attackable for Enemy {
+    fn take_damage(&mut self, damage: u64) -> String {
+        self.health -= damage;
+        format!("{} took {damage} points of damage.", &self.name)
     }
 }
 
@@ -74,9 +103,26 @@ fn get_input() -> Vec<String> {
     input.iter().map(|&s| s.into()).collect()
 }
 
-fn main() {
-    let hero = Player::new(100, PlayerClass::Rouge);
+//This is where the user input is going to be translated into the actions the player can take
+//I actually might want to replace this with a iterator that runs through a list of available actions, so you can gain/lose available actions with different classes
+fn parse_input(input: &Vec<String>) -> Result<String, ()>  {
+    match input[0].as_str() {
+        "attack" => Ok(String::from("You punch a wall")),
+        _ => return Err(()),
+        
+    }
     
-    let some_text: Vec<String> = get_input();
-    dbg!("You entered: {}", some_text);
+}
+
+fn main() {
+    let mut hero = Player::new(100, PlayerClass::Rouge);
+    let mut goblin = Enemy::new("Bob", 10);
+    
+    goblin.take_damage(2);
+    
+    println!("{}", goblin.health)
+    
+    //let some_text: Vec<String> = get_input();
+    //let result = parse_input(&some_text);
+    //println!("You entered: {}", &result.unwrap());
 }
