@@ -58,6 +58,10 @@ impl Player {
         }
     }
     
+    fn attack(&self, target: &mut impl Attackable) -> String {
+        target.take_damage(10)
+    }
+    
     fn get_health(&self) -> u64 {
         self.health
     }
@@ -89,6 +93,7 @@ impl Attackable for Enemy {
     }
 }
 
+//I know it would be probably better to return an iterator instead of a vector of Strings, but I wrote this code right before reading that section in the book. I don't know quite yet how to output that iterator
 fn get_input() -> Vec<String> {
     let mut input: String = String::new();
     io::stdin()
@@ -116,9 +121,9 @@ fn parse_input(input: &Vec<String>) -> Result<String, ()>  {
 
 fn main() {
     let mut hero = Player::new(100, PlayerClass::Rouge);
-    let mut goblin = Enemy::new("Bob", 10);
+    let mut goblin = Enemy::new("Bob", 100);
     
-    goblin.take_damage(2);
+    hero.attack(&mut goblin);
     
     println!("{}", goblin.health)
     
